@@ -1,0 +1,149 @@
+for code= https://github.com/PranavDeshpande2004/AJP-code/tree/main/RMI_application
+
+📌 Remote Method Invocation (RMI)
+
+1. Architecture of RMI
+
+Client-Server Model: RMI allows a Java object running in one Java Virtual Machine (JVM)
+to invoke methods on an object in another JVM.
+
+Components:
+Client: Invokes methods on the remote object.
+Server: Hosts the remote object.
+Stub: Client-side proxy for the remote object.
+Skeleton (Java < 1.2): Server-side proxy that dispatches calls to the actual object.
+RMI Registry: Binds names to remote objects.
+Remote Interface: Defines the methods that can be invoked remotely.
+
+🔹 a. Application Layer
+ Contains client and server programs.
+ Client invokes methods on remote objects.
+ Server provides implementations of remote objects.
+
+🔹 b. Stub and Skeleton Layer (Proxy Layer)
+Handles communication between client and server:
+Stub (client-side): Acts as a proxy for the remote object. Marshals (converts) parameters and sends them to server.
+Skeleton (server-side, pre-Java 1.2): Unmarshals request, calls the actual method on the remote object, and sends the result back.
+🔸 In Java 2 and later, skeletons are replaced by reflection-based mechanisms.
+
+
+🔹 c. Remote Reference Layer
+Maintains references to remote objects.
+Handles:
+Object identity.
+Invocation semantics (e.g., once-only call).
+Reference creation and interpretation.
+
+🔹 d. Transport Layer
+Responsible for network-level communication.
+Uses TCP/IP sockets to send data between JVMs.
+Handles connection setup, listen, request/response.
+
+
+✅ 4. Flow of a Remote Method Call
+Client invokes a method on the stub.
+Stub:
+Marshals (converts) method arguments into a byte stream.
+Sends request to the remote server via transport layer.
+
+Skeleton (or reflective dispatcher in modern RMI):
+Unmarshals data.
+Calls the actual method on the remote object.
+Remote object executes the method.
+Result is marshaled and sent back to client.
+Stub unmarshals the result and returns it to the client.
+
+✅ 6. Advantages of RMI Architecture
+Fully object-oriented (Java-based).
+Allows pass-by-value and pass-by-reference semantics.
+Handles complex object graphs.
+Integrates easily with other Java technologies like JDBC, Servlets.
+
+
+📌2. RMI Registry
+1.The RMI Registry is like a telephone directory for remote objects in Java.
+2.It helps clients find server-side objects by their unique names (bind names).
+3.It’s a built-in name service in Java used for Remote Method Invocation (RMI).
+
+✅ Key Points (with Simple Examples)
+1.Acts like a Register Office:
+When a server creates a remote object, it "registers" it in the RMI Registry using a unique name.
+This name is called the bind name.
+
+2.Client Finds Remote Object Using Name:
+The client doesn't directly know where the object is or how it works.
+exp:
+Calculator obj = (Calculator) Naming.lookup("rmi://localhost/CalculatorService");
+
+3.Works Like a Middleman:
+The RMI Registry is a middleman between the server and the client.
+It connects clients to the correct remote objects.
+  
+4.Location of Registry
+It usually runs on the same machine as the server, but clients can access it remotely using the IP address.
+
+5.Method:
+bind(String name, Remote obj) – Registers a new object.
+rebind(String name, Remote obj) – Replaces an existing one.
+lookup(String name) – Client uses this to find the object.
+unbind(String name) – Removes the object from the registry.
+
+
+📌3. The RMI Programming Model
+Define Remote Interface: Must extend java.rmi.Remote.
+Implement Remote Interface: Must extend UnicastRemoteObject.
+Register Object with RMI Registry.(Serevr side code)
+Client lookup and call methods remotely.(Client side code)
+
+📌4. Interfaces and Implementations
+visit code-(refer PrintI.java and for implementations refer PrintC.java)
+
+📌5. Writing Distributed Application with RMI
+Create a remote interface.
+Provide an implementation of the interface.
+Compile the code and generate stubs.
+Start the RMI registry.
+Start the server to bind the object.
+Create a client to lookup and invoke the method.
+
+📌6.Naming Services
+A naming service allows objects or resources to be identified by names instead of memory addresses or references.
+In Java RMI, it helps clients locate remote objects using a logical name (bind name).
+Method:
+bind(String name, Remote obj) – Registers a new object.
+rebind(String name, Remote obj) – Replaces an existing one.
+lookup(String name) – Client uses this to find the object.
+unbind(String name) – Removes the object from the registry.
+
+
+📌7.Naming and Directory Services
+A directory service is an enhanced naming service.
+In addition to names, it allows storing attributes (metadata) about each object.
+It provides search, browse, and filtering features.
+Example: Search for a service by name, type, location, or other properties.
+Extends naming to directory services (like JNDI - Java Naming and Directory Interface).
+Allows association of names with resources in a hierarchical directory-like structure.
+JNDI supports:LDAP, DNS, NIS, RMI registry, etc.
+example=
+Context ctx = new InitialContext();
+DataSource ds = (DataSource) ctx.lookup("jdbc/myDataSource");
+
+ 📌 9. Remote Object Activation in RMI
+Remote Object Activation allows remote objects to be loaded and activated on demand (i.e., lazy loading).
+Instead of keeping remote objects running in memory all the time, they are activated when a client needs them.
+It is a feature of RMI's activation system to save system  resources.
+
+📌 Enlist – Roles of Client and Server in Java RMI
+✅ Server Roles
+Creates the remote object implementing the remote interface.
+Exports the remote object to make it available for client invocation.
+Registers (binds) the remote object with the RMI registry using a unique name.
+Starts the RMI registry (if not already running).
+Waits for client requests to execute remote methods.
+
+✅ Client Roles
+Looks up the remote object from the RMI registry using its bind name.
+Obtains the reference (stub) of the remote object.
+Invokes remote methods on the server object via the stub.
+Handles remote exceptions (like RemoteException).
+Uses only the remote interface, not the implementation.
