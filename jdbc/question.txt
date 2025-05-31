@@ -1,0 +1,135 @@
+1. The Concept of JDBC (Java Database Connectivity)
+JDBC is an API (Application Programming Interface) in Java to connect and execute queries with databases.
+
+It provides methods to query and update data in a database.
+
+JDBC allows Java applications to interact with a wide range of relational databases (e.g., MySQL, Oracle, PostgreSQL).
+-------------------------------------------------------------------------------------------------------------
+2. JDBC Driver Types
+
+There are 4 types of JDBC drivers:
+
+Type 1: JDBC-ODBC Bridge Driver
+
+Translates JDBC calls into ODBC calls.
+
+Not recommended (deprecated in Java 8).
+---------------------------------------------------
+Type 2: Native-API Driver
+
+Uses native code libraries of the database.
+
+Faster than Type 1 but platform-dependent.
+---------------------------------------------------
+Type 3: Network Protocol Driver
+
+Sends JDBC calls to a middleware server, which then communicates with the database.
+
+Good for internet-based applications.
+--------------------------------------------------------
+Type 4: Thin Driver (Pure Java Driver)
+
+Converts JDBC calls directly into database-specific protocol.
+
+Platform-independent and most commonly used.
+-------------------------------------------------------------
+3. JDBC Architecture
+Follows a two-tier or three-tier architecture.
+
+Key components:
+
+DriverManager – Manages a list of database drivers.
+
+Connection – Establishes a session with the database.
+
+Statement – Executes SQL queries.
+
+ResultSet – Holds the data returned by a query.
+--------------------------------------------------------------------
+4. JDBC Packages
+java.sql – Core JDBC classes like Connection, Statement, ResultSet.
+
+javax.sql – Advanced features like connection pooling (DataSource).
+------------------------------------------------------------------------
+5. Overview of JDBC Process
+Load the JDBC driver class.
+
+Establish a connection using DriverManager.
+
+Create a Statement or PreparedStatement.
+
+Execute SQL queries.
+
+Process the results via ResultSet.
+
+Close the connection.
+------------------------------------------------------
+
+
+IMP for JDBC Coding
+==========================================
+
+🔹 1. Statement vs PreparedStatement
+✅ Statement
+Used when SQL is static (doesn't change) and there are no user inputs.
+Not safe from SQL injection.
+Less efficient for repeated queries.
+
+Usage:
+Statement stmt = connection.createStatement();
+ResultSet rs = stmt.executeQuery("SELECT * FROM users");
+
+✅ PreparedStatement
+Used when SQL includes user input (parameters).
+
+Safe from SQL injection.
+
+Faster for repeated execution because it's precompiled.
+
+Usage:
+String sql = "SELECT * FROM users WHERE id = ?";
+PreparedStatement pstmt = connection.prepareStatement(sql);
+pstmt.setInt(1, 5); // sets the first ? to 5
+ResultSet rs = pstmt.executeQuery();
+
+🔹 2. executeQuery() vs executeUpdate()
+✅ executeQuery()
+Used for SELECT queries.
+
+Returns a ResultSet (table of data).
+
+Usage:
+ResultSet rs = stmt.executeQuery("SELECT * FROM users");
+OR with PreparedStatement:
+ResultSet rs = pstmt.executeQuery();
+
+
+✅ executeUpdate()
+Used for INSERT, UPDATE, DELETE.
+
+Returns an int representing number of rows affected.
+
+Usage:
+int rows = stmt.executeUpdate("DELETE FROM users WHERE id = 10");
+OR with PreparedStatement:
+PreparedStatement pstmt = conn.prepareStatement("UPDATE users SET name=? WHERE id=?");
+pstmt.setString(1, "John");
+pstmt.setInt(2, 5);
+int rows = pstmt.executeUpdate(); // returns number of updated rows
+
+
+✅ Summary Table
+Feature	Statement	PreparedStatement
+Use Case	Static SQL	Dynamic SQL (with parameters)
+SQL Injection Safe	❌ No	✅ Yes
+Performance	Less efficient	Better for repeated execution
+Execute SELECT	executeQuery()	executeQuery()
+Execute INSERT/UPDATE/DELETE	executeUpdate()	executeUpdate()
+
+🚀 Real-life Rule of Thumb:
+Always use PreparedStatement when taking user input.
+
+Use executeQuery() for SELECT.
+
+Use executeUpdate() for INSERT, UPDATE, DELETE.
+
