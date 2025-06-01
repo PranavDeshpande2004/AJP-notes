@@ -1,0 +1,344 @@
+📌NETWORKING
+
+ 📌Tpoic1. Connection-Oriented Transmission
+Connection-oriented transmission refers to a type of communication in which a dedicated connection (channel) 
+is established between sender and receiver before any data is transferred.
+It belong to java.net Packages
+✅ Key Features:
+1.Uses TCP (Transmission Control Protocol)
+2.Ensures data integrity
+
+🔸 2. Java Classes for TCP:
+| Class          | Description                                                      |
+| -------------- | ---------------------------------------------------------------- |
+| `Socket`      | Used by client to connect to server                          |
+| `ServerSocket` | Used by server to listen and accept connections from clients |
+
+🔹 Stream-Based Communication:
+TCP sockets use InputStream and OutputStream to send/receive data.
+Stream-based = continuous byte transfer (like audio stream).
+
+🔸 3. Creating a TCP Client in Java
+✅ Steps:
+Create a Socket to connect to server
+Get OutputStream to send data
+Get InputStream to receive data
+Close socket
+
+🔹 Example Code:
+import java.io.*;
+import java.net.*;
+
+public class TCPClient {
+    public static void main(String[] args) throws IOException {
+        Socket socket = new Socket("localhost", 5000); 
+        DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+        DataInputStream in = new DataInputStream(socket.getInputStream());
+
+        out.writeUTF("Hello from Client");
+        String response = in.readUTF();
+        System.out.println("Server says: " + response);
+
+        socket.close();
+    }
+}
+
+🔸 4. Creating a TCP Server in Java
+✅ Steps:
+Create a ServerSocket on a port
+Wait for client using accept()
+Use InputStream and OutputStream
+Close connections
+
+🔹 Example Code:
+import java.io.*;
+import java.net.*;
+
+public class TCPServer {
+    public static void main(String[] args) throws IOException {
+        ServerSocket serverSocket = new ServerSocket(5000);
+        System.out.println("Server started, waiting for client...");
+
+        Socket clientSocket = serverSocket.accept(); // wait for client
+        DataInputStream in = new DataInputStream(clientSocket.getInputStream());
+        DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
+
+        String message = in.readUTF();
+        System.out.println("Client says: " + message);
+        out.writeUTF("Hello from Server");
+
+        clientSocket.close();
+        serverSocket.close();
+    }
+}
+
+🧠 Mini Mind Map
+Connection-Oriented (TCP)
+│
+├── Uses Socket, ServerSocket
+├── Client
+│   └── Socket + Output/Input
+├── Server
+│   └── ServerSocket + accept()
+└── Stream-based data exchange
+
+
+📌Topic 2: InetAddress, Factory Methods, Instance Methods, Inet4Address, Inet6Address
+
+✅ Definition:
+InetAddress is a class in the java.net package that represents an IP address (either IPv4 or IPv6) and can be used to resolve hostnames into IP addresses and vice versa.
+📦 Package:java.net.InetAddress
+
+✅ Purpose:
+Lookup IP address by hostname
+Reverse lookup: hostname from IP
+Handle both IPv4 (Handle 32 bit)and IPv6(Handle 128 bit) addresse
+
+✅ Factory Methods of InetAddress
+Factory methods are static methods used to create or retrieve InetAddress objects.
+| Method                      | Description                                           |
+| --------------------------- | ----------------------------------------------------- |
+| `getByName(String host)`    | Returns `InetAddress` for a hostname                  |
+| `getByAddress(byte[] addr)` | Returns address from byte array                       |
+| `getLocalHost()`            | Returns IP address of the **local machine**           |
+| `getAllByName(String host)` | Returns **all** IP addresses associated with hostname |
+
+✅ Instance Methods of InetAddress
+Once you have an InetAddress object, you can use instance methods to retrieve information.
+| Method                     | Description                                   |
+| -------------------------- | --------------------------------------------- |
+| `getHostName()`            | Returns the hostname                          |
+| `getHostAddress()`         | Returns IP address as a string                |
+| `isReachable(int timeout)` | Checks if the host is reachable               |
+| `toString()`               | String representation of address              |
+
+🔹 Example Code:
+import java.net.*;
+public class Inet {
+    public static void main(String[] args) throws Exception {
+        InetAddress ip1=InetAddress.getByName("www.google.com");
+        System.out.println("HostName:"+ip1.getHostName());
+        System.out.println("IP address:"+ip1.getHostAddress());
+
+        InetAddress[]ip2=InetAddress.getAllByName("www.google.com");
+        for(InetAddress i:ip2){
+            System.out.println("IP address:"+i.getHostAddress());
+        }
+
+        InetAddress ip3=InetAddress.getLocalHost();
+        System.out.println("Local HostName:"+ip3.getHostName());
+        System.out.println("Local machine Ip address:"+ip3.getHostAddress());
+    }
+
+}
+🧠 Mini Mind Map
+InetAddress (abstract)
+│
+├── Factory Methods
+│   ├── getByName()
+│   ├── getAllByName()
+│   └── getLocalHost()
+│
+├── Instance Methods
+│   ├── getHostName()
+│   ├── getHostAddress()
+│   └── isReachable()
+│
+└── Subclasses
+    ├── Inet4Address (IPv4)
+    └── Inet6Address (IPv6)
+
+📌 Topic 3: TCP/IP Client Sockets
+
+✅ Definition:(Socket)
+A socket is a communication endpoint — a combination of an IP address and a port number — that allows two machines to communicate over a network.
+
+✅ TCP/IP:
+TCP = Transmission Control Protocol (connection-oriented, reliable)
+IP = Internet Protocol (used for addressing)
+
+✅ 3. Java Classes Used
+| Class                  | Purpose                                   |
+| ---------------------- | ----------------------------------------- |
+| `java.net.Socket`      | Creates a TCP connection to a remote host |
+| `java.io.InputStream`  | Reads data from the server                |
+| `java.io.OutputStream` | Sends data to the server                  |
+
+✅4. Complete Example: TCP Client Program:(Refer from Topic 1: point-🔸 3. Creating a TCP Client in Java)
+
+🧠 Mini Mind Map
+TCP Client Socket
+├── Create Socket
+│   └── new Socket(host, port)
+├── Send Data
+│   └── getOutputStream() → write()
+├── Receive Data
+│   └── getInputStream() → read()
+└── Close Socket
+
+📌 Topic 4: URL, URLConnection, HttpURLConnection, The URI Class, Cookies
+
+🔸 1. URL – java.net.URL
+✅ Definition:
+A URL (Uniform Resource Locator) is a reference (an address) to a resource on the Internet.
+
+✅Common Methods:
+| Method             | Description                               |
+| ------------------ | ----------------------------------------- |
+| `getProtocol()`    | Returns the protocol (e.g., "https")      |
+| `getHost()`        | Returns the domain name                   |
+| `getPort()`        | Returns the port (or -1 if not specified) |
+| `getPath()`        | Returns the file path                     |
+| `openConnection()` | Opens connection to the resource          |
+
+🔸 2. URLConnection & HttpURLConnection
+✅ URLConnection:
+Superclass for all types of connections (HTTP, FTP, etc.)
+Used to read from or write to a URL
+
+Example:
+URL url = new URL("https://www.example.com");
+URLConnection conn = url.openConnection();
+InputStream in = conn.getInputStream();
+
+✅ HttpURLConnection:
+Subclass of URLConnection for HTTP-specific features
+Allows GET, POST requests, setting headers, reading status codes, etc.
+
+Example:
+URL url = new URL("https://www.example.com");
+HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+conn.setRequestMethod("GET");
+int status = conn.getResponseCode(); // 200 = OK
+
+🔸 3. Cookies
+✅ What are Cookies?
+Small pieces of data stored by a web server on the client browser.
+Used to remember user sessions, preferences, or login info.
+
+✅ How Cookies work:
+Server sends a Set-Cookie header in HTTP response.
+Browser stores the cookie.
+On next request, browser sends Cookie header back to the server.
+
+🧠 Mind Map
+Internet Communication
+│
+├── URL (Locator)
+│   └── getHost(), getProtocol(), getPath()
+├── URI (Identifier)
+│   └── More general, supports mailto:, ftp:, etc.
+├── URLConnection
+│   └── openConnection() → InputStream
+├── HttpURLConnection
+│   └── setRequestMethod(), getResponseCode()
+└── Cookies
+    ├── Set-Cookie (Server)
+    └── Cookie (Client request)
+
+📌 Topic 5: TCP/IP Server Sockets and Datagrams
+🔸Part 1: TCP/IP Server Sockets(Refer Topic:1  point:🔸 4. Creating a TCP Server in Java)
+
+🔸 Part 2: Datagrams – UDP Communication
+✅ Concept:
+UDP (User Datagram Protocol) is connectionless and faster but not guaranteed delivery.
+In Java, UDP is handled using:
+DatagramSocket (for sending/receiving data)
+DatagramPacket (to hold the data)
+
+🔹 UDP Server Steps:
+Create a DatagramSocket on a port.
+Receive packets using receive().
+Read the data and respond using send().
+✅ UDP Server Example:
+DatagramSocket socket = new DatagramSocket(6000);
+byte[] buf = new byte[1024];
+DatagramPacket packet = new DatagramPacket(buf, buf.length);
+socket.receive(packet);
+
+
+🔹 UDP Client Steps:
+Create a DatagramSocket.
+Prepare DatagramPacket with data and server address.
+Send it using send().
+✅ UDP Client Example:
+DatagramSocket socket = new DatagramSocket();
+DatagramPacket packet = new DatagramPacket(data, data.length, address, 6000);
+socket.send(packet);
+
+🧠 Mind Map:
+Socket Communication
+│
+├── TCP/IP (Reliable)
+│   ├── ServerSocket
+│   ├── Socket
+│   └── Streams (Input/Output)
+│
+└── UDP (Fast, Unreliable)
+    ├── DatagramSocket
+    └── DatagramPacket
+
+📌 Topic 6: Connecting to a Server, Implementing Servers, Sending Email
+
+Part 1: Connecting to a Server(Refer Topic:1)
+Part 2: Implementing Servers(Refer Topic:1)
+
+Part 3: Sending Email using Java
+✅ Concept:
+Sending email in Java requires connecting to an SMTP server.
+Java provides the JavaMail API to send emails.
+💡 You must include javax.mail and javax.mail.internet packages (usually via an external library like javax.mail.jar).
+
+Set SMTP properties
+Create Session and authenticate
+Create MimeMessage
+Send using Transport.send()
+
+✅ Example Code (Gmail SMTP):
+Properties props = new Properties();
+props.put("mail.smtp.host", "smtp.gmail.com");
+Session session = Session.getInstance(props, new Authenticator() {...});
+MimeMessage msg = new MimeMessage(session);
+Transport.send(msg);
+
+📌Topic 7: Servlet Overview – Java Web Server – Life Cycle of a Servlet – Your First Servlet
+
+✅ Definition:( Servlet)
+A Servlet is a Java class that runs on a web server and acts as a middle layer between client requests (usually HTTP) and server responses.
+
+✅ Definition:(Servlet Container)
+A Servlet container (like Apache Tomcat) is a part of a web server
+ that manages the lifecycle of servlets, maps URLs, and handles HTTP requests/responses.(ex.Apache Tomcat)
+
+🔹Methods in Servlet Lifecycle:
+ [init()] ----> [service()] ----> [destroy()]
+     |              ^                |
+     |              |                |
+   Called      Called per         Called when
+ once by       HTTP request       servlet ends
+ container
+
+✅For Servlet Example:https://github.com/PranavDeshpande2004/AJP-code/tree/main/Login_singup
+
+✅Google Docs format of Quick Summary:https://chatgpt.com/canvas/shared/683bfc43c8508191a607658d7ed9e9f2
+
+
+🧠 Quick Revision Mind Map:
+java.net
+│
+├── TCP (Socket, ServerSocket)
+│   └── Reliable, Stream-based
+├── UDP (DatagramSocket, DatagramPacket)
+│   └── Fast, Connectionless
+├── InetAddress
+├── URL, URLConnection
+├── URI, HttpURLConnection
+└── Cookies, Email, Servers
+
+Servlets
+│
+├── Overview, Java Web Server
+├── Servlet Lifecycle
+│   ├── init()
+│   ├── service()
+│   └── destroy()
